@@ -1,0 +1,67 @@
+[package]
+name = "bls-signatures"
+version = "0.13.0"
+authors = ["dignifiedquire <dignifiedquire@gmail.com>"]
+license = "MIT OR Apache-2.0"
+edition = "2018"
+resolver = "2"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+crate-type = ["lib"]
+
+[dependencies]
+rand_core = { version = "0.6.3", default-features = false }
+rand = "0.8.5"
+generic-array = "0.14.6"
+serde = {version = "1.0.106", features = ["derive"] }
+
+# for ECIES
+chacha20poly1305 = { version = "0.9", optional = true }
+sha2 = { version = "0.9", optional = true }
+hkdf = { version = "0.11.0", optional = true }
+
+# bls12_377
+ark-bls12-377 = { version = "0.3.0" }
+# bls12_381
+ark-bls12-381 = { version = "0.3.0" }
+ark-serialize = { version = "0.3.0", features = [ "derive" ] }
+ark-ff = { version = "0.3.0", features = [ "std" ] }
+ark-ec = { version = "0.3.0", features = [ "std" ] }
+bls-crypto = { git = "https://github.com/celo-org/bls-crypto" }
+thiserror = "1.0.15"
+bincode = "1.2.1"
+
+rayon = { version = "1", optional = true }
+subtle = "2.2.1"
+
+ff = "0.12"
+group = "0.12"
+pairing_lib = { version = "0.22.0", package = "pairing" }
+
+bls12_381 = { version = "=0.7.0", optional = true, features = ["experimental"] }
+
+blst_lib = { version = "=0.3.10", optional = true, package = "blst" }
+blstrs = { version = "0.6.0", optional = true }
+rand_chacha = "0.3.1"
+
+
+[dev-dependencies]
+static_assertions = "1.1.0"
+proptest = "1.0.0"
+rand = "0.8"
+base64 = "0.13.0"
+serde = { version = "1.0.106", features = ["derive"] }
+serde_json = "1.0.52"
+base64-serde = "0.6.1"
+rand_chacha = "0.3.1"
+
+[features]
+default = ["pairing", "multicore"]
+multicore = ["rayon"]
+pairing = [ "bls12_381", "sha2", "hkdf","chacha20poly1305"]
+blst = [ "blst_lib", "blstrs" ]
+blst-portable = [ "blst_lib", "blst_lib/portable", "blstrs/portable" ]
+# Enable parallel computation. Cannot be used with WASM.
+parallel = ["ark-ec/parallel", "ark-ff/parallel", "bls-crypto/parallel"]
